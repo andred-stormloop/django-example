@@ -14,6 +14,17 @@ from .serializers import MessageSerializer
 
 @method_decorator(csrf_exempt, name='dispatch')
 
+class MessageDeleteView(APIView):
+
+    def delete(self, request, pk):
+        try:
+            message = Message.objects.get(pk=pk)
+        except Message.DoesNotExist:
+            return Response({'error': 'Message not found or you do not have permission to delete it.'}, status=status.HTTP_404_NOT_FOUND)
+
+        message.delete()
+        return Response({'message': 'Message deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
